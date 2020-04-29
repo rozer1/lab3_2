@@ -1,2 +1,2 @@
 ### Opis
-https://docs.google.com/document/d/15g_e5xH7xLFsX-xDY_h_Omu2GwWA-Qc9TXjELCkUZe4/edit?usp=sharing
+https://docs.google.com/document/d/1sBwbCxeD5dAvSJzEiE1Wck9d77rG3nDA9ziiCtOxQUU/edit?usp=sharing
