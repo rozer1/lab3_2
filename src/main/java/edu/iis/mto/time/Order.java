@@ -1,49 +1,24 @@
 package edu.iis.mto.time;
 
-import java.time.Clock;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
 
-public class Order extends Clock {
+import java.time.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Order {
 
     private static final int VALID_PERIOD_HOURS = 24;
     private State orderState;
     private List<OrderItem> items = new ArrayList<OrderItem>();
-    private Instant subbmitionDate;
+    private DateTime subbmitionDate;
+    public int time;
 
-    //clock
-    private final Instant WHEN_STARTED = Instant.now();
-    private final ZoneId DEFAULT_TZONE = ZoneId.systemDefault();
-    private long count = 0;
+    public Order(int time) {
 
-
-    private Instant nextInstant() {
-        ++count;
-        return WHEN_STARTED.plusSeconds(count);
-    }
-
-    @Override
-    public ZoneId getZone() {
-        return DEFAULT_TZONE;
-    }
-
-    @Override
-    public Clock withZone(ZoneId zone) {
-        return Clock.fixed(WHEN_STARTED, zone);
-    }
-
-    @Override
-    public Instant instant() {
-        return nextInstant();
-    }
-
-    public Order() {
         orderState = State.CREATED;
+        this.time = time;
     }
 
     public void addItem(OrderItem item) {
@@ -58,13 +33,13 @@ public class Order extends Clock {
         requireState(State.CREATED);
 
         orderState = State.SUBMITTED;
-        subbmitionDate = Instant.now().plusSeconds(-90001);
+        subbmitionDate = TimeData.getTime(time);
 
     }
 
     public void confirm() {
         requireState(State.SUBMITTED);
-        int hoursElapsedAfterSubmittion = Hours.hoursBetween(DateTime.parse(subbmitionDate.toString()),new DateTime()).getHours();
+        int hoursElapsedAfterSubmittion = Hours.hoursBetween(subbmitionDate,TimeData.getTime()).getHours();
         if (hoursElapsedAfterSubmittion > VALID_PERIOD_HOURS) {
             orderState = State.CANCELLED;
             throw new OrderExpiredException();
@@ -88,9 +63,9 @@ public class Order extends Clock {
         }
 
         throw new OrderStateException("order should be in state "
-                                      + allowedStates
-                                      + " to perform required  operation, but is in "
-                                      + orderState);
+                + allowedStates
+                + " to perform required  operation, but is in "
+                + orderState);
 
     }
 
