@@ -3,7 +3,6 @@ package edu.iis.mto.time;
 import org.joda.time.DateTime;
 import org.joda.time.Hours;
 
-import java.time.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,12 +12,12 @@ public class Order {
     private State orderState;
     private List<OrderItem> items = new ArrayList<OrderItem>();
     private DateTime subbmitionDate;
-    public int time;
+    public TimeData actualDate;
 
-    public Order(int time) {
+    public Order(TimeData timeData) {
 
         orderState = State.CREATED;
-        this.time = time;
+        actualDate = timeData;
     }
 
     public void addItem(OrderItem item) {
@@ -33,13 +32,13 @@ public class Order {
         requireState(State.CREATED);
 
         orderState = State.SUBMITTED;
-        subbmitionDate = TimeData.getTime(time);
+        subbmitionDate = actualDate.time;
 
     }
 
     public void confirm() {
         requireState(State.SUBMITTED);
-        int hoursElapsedAfterSubmittion = Hours.hoursBetween(subbmitionDate,TimeData.getTime()).getHours();
+        int hoursElapsedAfterSubmittion = Hours.hoursBetween(subbmitionDate, actualDate.getTime()).getHours();
         if (hoursElapsedAfterSubmittion > VALID_PERIOD_HOURS) {
             orderState = State.CANCELLED;
             throw new OrderExpiredException();
